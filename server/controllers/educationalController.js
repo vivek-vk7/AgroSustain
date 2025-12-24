@@ -1,18 +1,12 @@
 const asyncHandler = require('express-async-handler');
 const EducationalContent = require('../models/EducationalContent');
 
-// @desc    Fetch all approved educational content
-// @route   GET /api/education
-// @access  Public
 const getEducationalContent = asyncHandler(async (req, res) => {
     const category = req.query.category ? { category: req.query.category } : {};
     const content = await EducationalContent.find({ isApproved: true, ...category }).populate('user', 'name');
     res.json(content);
 });
 
-// @desc    Fetch single educational content
-// @route   GET /api/education/:id
-// @access  Public
 const getContentById = asyncHandler(async (req, res) => {
     const content = await EducationalContent.findById(req.params.id).populate('user', 'name');
 
@@ -24,9 +18,6 @@ const getContentById = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Create educational content
-// @route   POST /api/education
-// @access  Private/Proposer/Admin
 const createContent = asyncHandler(async (req, res) => {
     const { title, content, resourceUrl, category } = req.body;
 
@@ -36,24 +27,18 @@ const createContent = asyncHandler(async (req, res) => {
         content,
         resourceUrl,
         category,
-        isApproved: false, // Needs admin approval
+        isApproved: false,
     });
 
     const createdContent = await newContent.save();
     res.status(201).json(createdContent);
 });
 
-// @desc    Fetch my educational content
-// @route   GET /api/education/mycontent
-// @access  Private/Proposer
 const getMyContent = asyncHandler(async (req, res) => {
     const content = await EducationalContent.find({ user: req.user._id });
     res.json(content);
 });
 
-// @desc    Delete educational content
-// @route   DELETE /api/education/:id
-// @access  Private/Proposer/Admin
 const deleteContent = asyncHandler(async (req, res) => {
     const content = await EducationalContent.findById(req.params.id);
 
