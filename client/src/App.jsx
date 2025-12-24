@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -12,6 +13,7 @@ import ArticleView from './pages/ArticleView';
 import Shipping from './pages/Shipping';
 import PlaceOrder from './pages/PlaceOrder';
 import OrderView from './pages/OrderView';
+import About from './pages/About';
 import Navbar from './components/Navbar';
 import ParticleBackground from './components/ParticleBackground';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -19,6 +21,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 function App() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 relative overflow-hidden">
+            <Toaster position="top-center" toastOptions={{ duration: 3000, style: { background: '#333', color: '#fff' } }} />
             <ParticleBackground />
             <Navbar />
             <div className="pt-24 md:pt-32 relative z-10">
@@ -30,6 +33,7 @@ function App() {
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/education" element={<Education />} />
                     <Route path="/article/:id" element={<ArticleView />} />
+                    <Route path="/about" element={<About />} />
                     <Route path="/shipping" element={<ProtectedRoute><Shipping /></ProtectedRoute>} />
                     <Route path="/placeorder" element={<ProtectedRoute><PlaceOrder /></ProtectedRoute>} />
                     <Route path="/order/:id" element={<ProtectedRoute><OrderView /></ProtectedRoute>} />

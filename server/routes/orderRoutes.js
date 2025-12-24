@@ -16,6 +16,6 @@ router.route('/myorders').get(protect, getMyOrders);
 router.route('/proposer').get(protect, proposer, getProposerOrders);
 router.route('/:id').get(protect, getOrderById);
 router.route('/:id/pay').put(protect, updateOrderToPaid);
-router.route('/:id/deliver').put(protect, protect, updateOrderToDelivered); // Both admin and proposer can update
+router.route('/:id/deliver').put(protect, proposer, updateOrderToDelivered);
 
 module.exports = router;

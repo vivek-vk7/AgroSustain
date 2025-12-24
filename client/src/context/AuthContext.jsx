@@ -8,14 +8,37 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const userInfo = localStorage.getItem('userInfo');
-        if (userInfo) {
-            const parsedUser = JSON.parse(userInfo);
-            setUser(parsedUser);
-            // Set global header if user exists
-            axios.defaults.headers.common['Authorization'] = `Bearer ${parsedUser.token}`;
-        }
-        setLoading(false);
+        const checkUserStatus = async () => {
+            const userInfo = localStorage.getItem('userInfo');
+
+            if (userInfo) {
+                const parsedUser = JSON.parse(userInfo);
+                setUser(parsedUser);
+                // Set global header if user exists
+                axios.defaults.headers.common['Authorization'] = `Bearer ${parsedUser.token}`;
+
+                try {
+                    // Fetch latest profile to sync status (e.g. if admin approved while user was logged in/away)
+                    const { data } = await axios.get('http://localhost:5000/api/auth/profile');
+
+                    // Merge new data (status) with existing token
+                    const updatedUser = { ...parsedUser, ...data };
+                    setUser(updatedUser);
+                    localStorage.setItem('userInfo', JSON.stringify(updatedUser));
+                } catch (error) {
+                    console.error("Session sync failed:", error);
+                    // If token is expired/invalid, logout to prevent stuck state
+                    if (error.response?.status === 401) {
+                        localStorage.removeItem('userInfo');
+                        delete axios.defaults.headers.common['Authorization'];
+                        setUser(null);
+                    }
+                }
+            }
+            setLoading(false);
+        };
+
+        checkUserStatus();
     }, []);
 
     // Login Function

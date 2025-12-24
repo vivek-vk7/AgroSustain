@@ -81,9 +81,9 @@ const OrderView = () => {
                                         <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-xl shadow-sm" />
                                         <div className="flex-grow">
                                             <p className="font-bold text-green-900 uppercase tracking-tight">{item.name}</p>
-                                            <p className="text-xs font-bold text-green-500">{item.qty} x ${item.price}</p>
+                                            <p className="text-xs font-bold text-green-500">{item.qty} x ₹{item.price}</p>
                                         </div>
-                                        <p className="font-black text-green-800">${item.qty * item.price}</p>
+                                        <p className="font-black text-green-800">₹{item.qty * item.price}</p>
                                     </div>
                                 ))}
                             </div>
@@ -93,7 +93,7 @@ const OrderView = () => {
                             <Link to="/dashboard" className="text-green-600 font-black text-xs uppercase hover:underline">Track in Dashboard</Link>
                             <div className="text-right">
                                 <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Total Paid</p>
-                                <p className="text-4xl font-black text-green-800">${order.totalPrice}</p>
+                                <p className="text-4xl font-black text-green-800">₹{order.totalPrice}</p>
                             </div>
                         </div>
                     </div>

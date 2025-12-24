@@ -35,7 +35,7 @@ const Product = ({ product }) => {
                 </p>
 
                 <div className="flex items-center justify-between mt-auto">
-                    <span className="text-2xl font-black text-green-700">${product.price}</span>
+                    <span className="text-2xl font-black text-green-700">₹{product.price}</span>
                     <Link
                         to={`/product/${product._id}`}
                         className="bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-2 px-4 rounded-lg transition-colors shadow-md"

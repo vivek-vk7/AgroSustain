@@ -1,35 +1,31 @@
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/Product');
 
-// @desc    Fetch all products
-// @route   GET /api/products
-// @access  Public
 const getProducts = asyncHandler(async (req, res) => {
-    // Basic search functionality
-    const keyword = req.query.keyword
-        ? {
-            name: {
-                $regex: req.query.keyword,
-                $options: 'i',
-            },
-        }
-        : {};
+    const keyword = req.query.keyword ? {
+        name: {
+            $regex: req.query.keyword,
+            $options: 'i',
+        },
+    } : {};
 
-    const products = await Product.find({ ...keyword });
+    const category = req.query.category ? { category: req.query.category } : {};
+    const location = req.query.location ? {
+        location: {
+            $regex: req.query.location,
+            $options: 'i',
+        }
+    } : {};
+
+    const products = await Product.find({ ...keyword, ...category, ...location });
     res.json(products);
 });
 
-// @desc    Fetch products by user
-// @route   GET /api/products/myproducts
-// @access  Private/Proposer
 const getMyProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({ user: req.user._id });
     res.json(products);
 });
 
-// @desc    Fetch single product
-// @route   GET /api/products/:id
-// @access  Public
 const getProductById = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
 
@@ -41,11 +37,8 @@ const getProductById = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Create a product
-// @route   POST /api/products
-// @access  Private/Proposer/Admin
 const createProduct = asyncHandler(async (req, res) => {
-    const { name, price, description, image, category, countInStock } = req.body;
+    const { name, price, description, image, category, location, countInStock } = req.body;
 
     const product = new Product({
         name,
@@ -53,26 +46,23 @@ const createProduct = asyncHandler(async (req, res) => {
         user: req.user._id,
         image,
         category,
+        location,
         countInStock,
         numReviews: 0,
         description,
-        isApproved: false, // Default to not approved
+        isApproved: false,
     });
 
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
 });
 
-// @desc    Delete a product
-// @route   DELETE /api/products/:id
-// @access  Private/Proposer/Admin
 const deleteProduct = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
-        // Ensure user owns the product or is admin
         if (product.user.toString() === req.user._id.toString() || req.user.role === 'admin') {
-            await product.deleteOne(); // or product.remove() in older mongoose
+            await product.deleteOne();
             res.json({ message: 'Product removed' });
         } else {
             res.status(401);
@@ -84,11 +74,8 @@ const deleteProduct = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Update a product
-// @route   PUT /api/products/:id
-// @access  Private/Proposer/Admin
 const updateProduct = asyncHandler(async (req, res) => {
-    const { name, price, description, image, category, countInStock } = req.body;
+    const { name, price, description, image, category, location, countInStock } = req.body;
 
     const product = await Product.findById(req.params.id);
 
@@ -99,6 +86,7 @@ const updateProduct = asyncHandler(async (req, res) => {
             product.description = description;
             product.image = image;
             product.category = category;
+            product.location = location;
             product.countInStock = countInStock;
 
             const updatedProduct = await product.save();

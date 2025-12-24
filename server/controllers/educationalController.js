@@ -5,7 +5,8 @@ const EducationalContent = require('../models/EducationalContent');
 // @route   GET /api/education
 // @access  Public
 const getEducationalContent = asyncHandler(async (req, res) => {
-    const content = await EducationalContent.find({ isApproved: true }).populate('user', 'name');
+    const category = req.query.category ? { category: req.query.category } : {};
+    const content = await EducationalContent.find({ isApproved: true, ...category }).populate('user', 'name');
     res.json(content);
 });
 

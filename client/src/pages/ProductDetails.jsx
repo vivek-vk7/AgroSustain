@@ -82,7 +82,7 @@ const ProductDetails = () => {
                                 <span className="text-gray-600 text-sm font-medium">({product.numReviews || 0} customer reviews)</span>
                             </div>
 
-                            <p className="text-3xl font-black text-green-700 mb-8">${product.price}</p>
+                            <p className="text-3xl font-black text-green-700 mb-8">₹{product.price}</p>
 
                             <div className="bg-green-100/50 p-6 rounded-2xl mb-8 border border-green-200/50 text-gray-700 leading-relaxed text-lg">
                                 {product.description}

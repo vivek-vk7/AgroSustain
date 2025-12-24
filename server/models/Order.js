@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Define the Order Schema
 const orderSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -30,7 +29,7 @@ const orderSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    paymentResult: { // Result from gateway (e.g., PayPal/Stripe)
+    paymentResult: {
         id: { type: String },
         status: { type: String },
         update_time: { type: String },

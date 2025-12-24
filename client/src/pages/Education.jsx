@@ -5,11 +5,16 @@ import { Link } from 'react-router-dom';
 const Education = () => {
     const [content, setContent] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedCategory, setSelectedCategory] = useState('All');
+
+    const categories = ['All', 'Soil Health', 'Organic Pests', 'Sustainable Farming', 'Crop Management', 'Market Trends'];
 
     useEffect(() => {
         const fetchContent = async () => {
+            setLoading(true);
             try {
-                const { data } = await axios.get('http://localhost:5000/api/education');
+                const query = selectedCategory !== 'All' ? `?category=${selectedCategory}` : '';
+                const { data } = await axios.get(`http://localhost:5000/api/education${query}`);
                 setContent(data);
                 setLoading(false);
             } catch (error) {
@@ -18,17 +23,30 @@ const Education = () => {
             }
         };
         fetchContent();
-    }, []);
+    }, [selectedCategory]);
 
     return (
         <div className="min-h-screen p-4 md:p-8 relative">
             {/* Global background enabled */}
 
             <div className="max-w-6xl mx-auto z-10 relative">
-                <header className="text-center mb-16 pt-10">
+                <header className="text-center mb-10 pt-10">
                     <h1 className="text-5xl md:text-6xl font-black text-green-800 tracking-tighter mb-4">Organic Knowledge</h1>
                     <p className="text-xl text-green-700 font-medium max-w-2xl mx-auto">Master the art of sustainable farming with guides from our experts and community. 📚</p>
                 </header>
+
+                {/* Category Filters */}
+                <div className="flex flex-wrap justify-center gap-3 mb-12">
+                    {categories.map(cat => (
+                        <button
+                            key={cat}
+                            onClick={() => setSelectedCategory(cat)}
+                            className={`px-5 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm ${selectedCategory === cat ? 'bg-green-600 text-white shadow-green-200 shadow-lg scale-105' : 'bg-white/60 text-green-800 hover:bg-green-100'}`}
+                        >
+                            {cat}
+                        </button>
+                    ))}
+                </div>
 
                 {loading ? (
                     <div className="flex justify-center py-20">
@@ -36,7 +54,7 @@ const Education = () => {
                     </div>
                 ) : content.length === 0 ? (
                     <div className="text-center py-20 bg-white/40 backdrop-blur-sm rounded-3xl border border-white/50">
-                        <p className="text-green-800 text-xl font-medium">No articles yet. Check back soon for expert guides!</p>
+                        <p className="text-green-800 text-xl font-medium">No articles found in this category.</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

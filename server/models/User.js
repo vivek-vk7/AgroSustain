@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-// Define the User Schema
 const userSchema = mongoose.Schema({
     name: {
         type: String,
@@ -18,35 +17,31 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['user', 'admin', 'proposer', 'farmer', 'expert'], // Available roles
+        enum: ['user', 'admin', 'proposer', 'farmer', 'expert'],
         default: 'user',
     },
-    // Specific to Proposers (Farmers/Experts)
     proposerStatus: {
         type: String,
         enum: ['pending', 'approved', 'rejected'],
-        default: 'pending', // Proposers need approval
+        default: 'pending',
     },
     location: {
-        type: String, // Useful for filtering sellers by location
+        type: String,
     },
     phone: {
         type: String,
     }
 }, {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
+    timestamps: true,
 });
 
-// Method to verify password
 userSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Middleware to hash password before saving
-userSchema.pre('save', async function (next) {
-    // Only hash if the password has been modified (or is new)
+userSchema.pre('save', async function () {
     if (!this.isModified('password')) {
-        next();
+        return;
     }
 
     const salt = await bcrypt.genSalt(10);

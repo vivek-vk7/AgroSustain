@@ -80,7 +80,7 @@ const PlaceOrder = () => {
                                         <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-xl shadow-sm" />
                                         <div className="flex-grow">
                                             <p className="font-bold text-green-900">{item.name}</p>
-                                            <p className="text-xs font-bold text-green-600 italic">{item.qty} x ${item.price} = ${item.qty * item.price}</p>
+                                            <p className="text-xs font-bold text-green-600 italic">{item.qty} x ₹{item.price} = ₹{item.qty * item.price}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -94,19 +94,19 @@ const PlaceOrder = () => {
                         <div className="space-y-5 mb-10">
                             <div className="flex justify-between font-bold text-xs uppercase tracking-[0.2em] text-gray-500">
                                 <span>Subtotal</span>
-                                <span>${itemsPrice.toFixed(2)}</span>
+                                <span>₹{itemsPrice.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between font-bold text-xs uppercase tracking-[0.2em] text-gray-500">
                                 <span>Shipping Fees</span>
-                                <span>${shippingPrice.toFixed(2)}</span>
+                                <span>₹{shippingPrice.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between font-bold text-xs uppercase tracking-[0.2em] text-gray-500">
                                 <span>Eco Tax (15%)</span>
-                                <span>${taxPrice}</span>
+                                <span>₹{taxPrice}</span>
                             </div>
                             <div className="pt-6 border-t border-green-100 flex justify-between items-center text-4xl font-black text-green-800">
                                 <span className="text-sm uppercase italic opacity-50">Total</span>
-                                <span>${totalPrice}</span>
+                                <span>₹{totalPrice}</span>
                             </div>
                         </div>
                         <button

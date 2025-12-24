@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
@@ -8,21 +8,47 @@ const Home = () => {
     const { user } = useContext(AuthContext);
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [categories, setCategories] = useState([]);
+
+    // Search State
+    const [keyword, setKeyword] = useState('');
+    const [category, setCategory] = useState('');
+    const [location, setLocation] = useState('');
+
+    const fetchProducts = useCallback(async (searchParams = {}) => {
+        setLoading(true);
+        try {
+            // Construct query string
+            const params = new URLSearchParams();
+            if (searchParams.keyword) params.append('keyword', searchParams.keyword);
+            if (searchParams.category) params.append('category', searchParams.category);
+            if (searchParams.location) params.append('location', searchParams.location);
+
+            const { data } = await axios.get(`http://localhost:5000/api/products?${params.toString()}`);
+            setProducts(data.filter(p => p.isApproved)); // Ensure we only show approved products
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching products", error);
+            setLoading(false);
+        }
+    }, []);
+
+    const fetchCategories = useCallback(async () => {
+        try {
+            const { data } = await axios.get('http://localhost:5000/api/admin/categories');
+            setCategories(data);
+        } catch (error) { console.error(error); }
+    }, []);
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const { data } = await axios.get('http://localhost:5000/api/products');
-                // Filter approved products only
-                setProducts(data.filter(p => p.isApproved));
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching products", error);
-                setLoading(false);
-            }
-        };
         fetchProducts();
-    }, []);
+        fetchCategories();
+    }, [fetchProducts, fetchCategories]);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        fetchProducts({ keyword, category, location });
+    };
 
     return (
         <div className="min-h-screen relative">
@@ -38,14 +64,32 @@ const Home = () => {
                         Connecting passionate farmers, expert advisors, and conscious buyers for a better, greener future. 🌱
                     </p>
                     {/* Search/Filter Bar could go here */}
-                    <div className="flex flex-wrap justify-center gap-4">
-                        <button className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-2xl shadow-xl transition-all hover:scale-105">
-                            Shop Products
+                    {/* Search/Filter Bar */}
+                    <form onSubmit={handleSearch} className="bg-white/90 backdrop-blur-md p-4 rounded-3xl shadow-2xl max-w-4xl mx-auto flex flex-col md:flex-row gap-4 border border-white/50">
+                        <input
+                            className="flex-grow px-6 py-4 rounded-2xl bg-green-50/50 border border-green-100 focus:ring-4 focus:ring-green-500/10 outline-none transition-all placeholder-green-800/40 text-green-900 font-medium"
+                            placeholder="What are you looking for?"
+                            value={keyword}
+                            onChange={(e) => setKeyword(e.target.value)}
+                        />
+                        <select
+                            className="px-6 py-4 rounded-2xl bg-green-50/50 border border-green-100 focus:ring-4 focus:ring-green-500/10 outline-none transition-all text-green-900 font-medium cursor-pointer appearance-none"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                        >
+                            <option value="">All Categories</option>
+                            {categories.map(c => <option key={c._id} value={c.name}>{c.name}</option>)}
+                        </select>
+                        <input
+                            className="px-6 py-4 rounded-2xl bg-green-50/50 border border-green-100 focus:ring-4 focus:ring-green-500/10 outline-none transition-all placeholder-green-800/40 text-green-900 font-medium md:w-48"
+                            placeholder="Location"
+                            value={location}
+                            onChange={(e) => setLocation(e.target.value)}
+                        />
+                        <button className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg transition-all active:scale-95">
+                            Search
                         </button>
-                        <Link to="/education" className="bg-white/70 backdrop-blur-md text-green-800 font-bold py-4 px-8 rounded-2xl shadow-xl border border-white/50 transition-all hover:scale-105 flex items-center justify-center">
-                            Expert Advice
-                        </Link>
-                    </div>
+                    </form>
                 </div>
             </div>
 

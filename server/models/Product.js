@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
 
-// Define the Product Schema
 const productSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'User', // Reference to the User model (Seller/Proposer)
+        ref: 'User',
     },
     name: {
         type: String,
@@ -13,7 +12,7 @@ const productSchema = mongoose.Schema({
     },
     image: {
         type: String,
-        required: true, // URL or path to image
+        required: true,
     },
     description: {
         type: String,
@@ -22,6 +21,11 @@ const productSchema = mongoose.Schema({
     category: {
         type: String,
         required: true,
+    },
+    location: {
+        type: String,
+        required: true,
+        default: 'Not Specified',
     },
     price: {
         type: Number,
@@ -43,7 +47,7 @@ const productSchema = mongoose.Schema({
     },
     isApproved: {
         type: Boolean,
-        default: false, // Admin needs to approve products
+        default: false,
     }
 }, {
     timestamps: true,

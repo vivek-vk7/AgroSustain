@@ -104,7 +104,7 @@ const UserDashboard = () => {
                                                 <tr key={o._id} className="hover:bg-white/40 transition-colors">
                                                     <td className="p-4 font-bold text-green-900 truncate max-w-[120px]">{o._id}</td>
                                                     <td className="p-4 text-sm font-medium text-gray-500">{new Date(o.createdAt).toLocaleDateString()}</td>
-                                                    <td className="p-4 font-black text-green-800">${o.totalPrice}</td>
+                                                    <td className="p-4 font-black text-green-800">₹{o.totalPrice}</td>
                                                     <td className="p-4">
                                                         <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter ${o.isDelivered ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-orange-50 text-orange-700 border border-orange-100'}`}>
                                                             {o.isDelivered ? 'Delivered' : 'In Transit'}

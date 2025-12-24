@@ -14,7 +14,7 @@ const getUsers = asyncHandler(async (req, res) => {
 
     if (status) {
         query.proposerStatus = status;
-        query.role = { $in: ['proposer', 'farmer', 'expert'] }; // Proposers, farmers, and experts have status
+        query.role = { $in: ['proposer', 'farmer', 'expert', 'user'] }; // Include 'user' for approval
     }
 
     const users = await User.find(query).select('-password');
@@ -103,6 +103,67 @@ const approveEducation = asyncHandler(async (req, res) => {
     }
 });
 
+const Order = require('../models/Order');
+const Category = require('../models/Category');
+
+// ... existing imports ...
+
+// @desc    Get platform stats
+// @route   GET /api/admin/stats
+// @access  Private/Admin
+const getPlatformStats = asyncHandler(async (req, res) => {
+    const usersCount = await User.countDocuments();
+    const productsCount = await Product.countDocuments();
+    const ordersCount = await Order.countDocuments();
+    const educationCount = await EducationalContent.countDocuments();
+
+    res.json({
+        users: usersCount,
+        products: productsCount,
+        orders: ordersCount,
+        education: educationCount,
+    });
+});
+
+// @desc    Get all categories
+// @route   GET /api/admin/categories
+// @access  Private/Admin
+const getCategories = asyncHandler(async (req, res) => {
+    const categories = await Category.find({});
+    res.json(categories);
+});
+
+// @desc    Add a category
+// @route   POST /api/admin/categories
+// @access  Private/Admin
+const addCategory = asyncHandler(async (req, res) => {
+    const { name } = req.body;
+    const categoryExists = await Category.findOne({ name });
+
+    if (categoryExists) {
+        res.status(400);
+        throw new Error('Category already exists');
+    }
+
+    const category = await Category.create({ name });
+    res.status(201).json(category);
+});
+
+// @desc    Delete a category
+// @route   DELETE /api/admin/categories/:id
+// @access  Private/Admin
+const deleteCategory = asyncHandler(async (req, res) => {
+    const category = await Category.findById(req.params.id);
+
+    if (category) {
+        await category.deleteOne();
+        res.json({ message: 'Category removed' });
+    } else {
+        res.status(404);
+        throw new Error('Category not found');
+    }
+});
+
 module.exports = {
     getUsers,
     updateProposerStatus,
@@ -110,4 +171,8 @@ module.exports = {
     approveProduct,
     getPendingEducation,
     approveEducation,
+    getPlatformStats,
+    getCategories,
+    addCategory,
+    deleteCategory,
 };

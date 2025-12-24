@@ -2,23 +2,18 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 
-// Middleware to protect routes (Authentication)
 const protect = asyncHandler(async (req, res, next) => {
     let token;
 
-    // Check if authorization header starts with Bearer
     if (
         req.headers.authorization &&
         req.headers.authorization.startsWith('Bearer')
     ) {
         try {
-            // Get token from header
             token = req.headers.authorization.split(' ')[1];
 
-            // Verify token
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            // Get user from the token (exclude password)
             req.user = await User.findById(decoded.id).select('-password');
 
             next();
@@ -35,7 +30,6 @@ const protect = asyncHandler(async (req, res, next) => {
     }
 });
 
-// Middleware for Admin access
 const admin = (req, res, next) => {
     if (req.user && req.user.role === 'admin') {
         next();
@@ -45,7 +39,6 @@ const admin = (req, res, next) => {
     }
 };
 
-// Middleware for Proposer (Farmer/Expert) access
 const proposer = (req, res, next) => {
     if (req.user && (['proposer', 'farmer', 'expert', 'admin'].includes(req.user.role))) {
         next();

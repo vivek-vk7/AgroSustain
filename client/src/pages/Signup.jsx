@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import toast from 'react-hot-toast';
 import AuthContext from "../context/AuthContext";
 import InputField from "../components/InputField";
 import SelectField from "../components/SelectField";
@@ -13,7 +14,7 @@ export default function Signup() {
         password: "",
         confirmPassword: ""
     });
-    const [error, setError] = useState("");
+
 
     const { user, register } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -40,10 +41,9 @@ export default function Signup() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
 
         if (formData.password !== formData.confirmPassword) {
-            setError("Passwords do not match");
+            toast.error("Passwords do not match");
             return;
         }
 
@@ -59,7 +59,7 @@ export default function Signup() {
                 navigate('/');
             }
         } else {
-            setError(result.message);
+            toast.error(result.message);
         }
     };
 
@@ -79,7 +79,7 @@ export default function Signup() {
                     </p>
                 </div>
 
-                {error && <div className="text-red-500 bg-red-100 p-2 rounded mb-4 text-center text-sm">{error}</div>}
+
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-5">

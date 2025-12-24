@@ -2,9 +2,6 @@ const asyncHandler = require('express-async-handler');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 
-// @desc    Create new order
-// @route   POST /api/orders
-// @access  Private
 const addOrderItems = asyncHandler(async (req, res) => {
     const {
         orderItems,
@@ -36,9 +33,6 @@ const addOrderItems = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Get order by ID
-// @route   GET /api/orders/:id
-// @access  Private
 const getOrderById = asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id).populate('user', 'name email');
 
@@ -50,9 +44,6 @@ const getOrderById = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Update order to paid
-// @route   PUT /api/orders/:id/pay
-// @access  Private
 const updateOrderToPaid = asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
 
@@ -74,9 +65,6 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Update order to delivered
-// @route   PUT /api/orders/:id/deliver
-// @access  Private/Proposer/Admin
 const updateOrderToDelivered = asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
 
@@ -92,27 +80,17 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Get logged in user orders
-// @route   GET /api/orders/myorders
-// @access  Private
 const getMyOrders = asyncHandler(async (req, res) => {
     const orders = await Order.find({ user: req.user._id });
     res.json(orders);
 });
 
-// @desc    Get all orders
-// @route   GET /api/orders
-// @access  Private/Admin
 const getOrders = asyncHandler(async (req, res) => {
     const orders = await Order.find({}).populate('user', 'id name');
     res.json(orders);
 });
 
-// @desc    Get orders for a proposer (orders containing their products)
-// @route   GET /api/orders/proposer
-// @access  Private/Proposer
 const getProposerOrders = asyncHandler(async (req, res) => {
-    // Find orders where at least one item's product belongs to the proposer
     const orders = await Order.find({
         'orderItems.product': { $in: await Product.find({ user: req.user._id }).distinct('_id') }
     }).populate('user', 'name email');

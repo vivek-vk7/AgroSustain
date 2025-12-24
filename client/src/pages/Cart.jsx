@@ -1,14 +1,20 @@
 import { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import CartContext from '../context/CartContext';
+import AuthContext from '../context/AuthContext';
 import ParticleBackground from '../components/ParticleBackground';
 
 const Cart = () => {
     const { cartItems, addToCart, removeFromCart } = useContext(CartContext);
+    const { user } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const checkoutHandler = () => {
-        navigate('/login?redirect=shipping');
+        if (user) {
+            navigate('/shipping');
+        } else {
+            navigate('/login?redirect=shipping');
+        }
     };
 
     const subtotal = cartItems.reduce((acc, item) => acc + item.qty * item.price, 0).toFixed(2);
@@ -33,7 +39,7 @@ const Cart = () => {
                                     <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-2xl border border-green-50 group-hover:scale-105 transition-transform" />
                                     <div className="flex-grow">
                                         <Link to={`/product/${item.product}`} className="text-xl font-black text-green-900 line-clamp-1 hover:text-green-600 transition-colors uppercase tracking-tight">{item.name}</Link>
-                                        <p className="text-sm font-bold text-green-700">${item.price}</p>
+                                        <p className="text-sm font-bold text-green-700">₹{item.price}</p>
                                     </div>
                                     <div className="flex items-center border border-green-100 bg-white/50 rounded-xl overflow-hidden shadow-inner">
                                         <select
@@ -62,7 +68,7 @@ const Cart = () => {
                             <div className="space-y-4 mb-8">
                                 <div className="flex justify-between text-gray-600 font-bold uppercase text-xs tracking-widest">
                                     <span>Items ({cartItems.reduce((acc, i) => acc + Number(i.qty), 0)})</span>
-                                    <span>${subtotal}</span>
+                                    <span>₹{subtotal}</span>
                                 </div>
                                 <div className="flex justify-between text-gray-600 font-bold uppercase text-xs tracking-widest">
                                     <span>Shipping</span>
@@ -70,7 +76,7 @@ const Cart = () => {
                                 </div>
                                 <div className="pt-4 border-t border-green-100 flex justify-between items-center text-3xl font-black text-green-800">
                                     <span>Total</span>
-                                    <span>${subtotal}</span>
+                                    <span>₹{subtotal}</span>
                                 </div>
                             </div>
                             <button

@@ -10,12 +10,10 @@ const {
 } = require('../controllers/productController');
 const { protect, proposer } = require('../middleware/authMiddleware');
 
-// Public routes
 router.get('/', getProducts);
 router.get('/myproducts', protect, proposer, getMyProducts);
 router.get('/:id', getProductById);
 
-// Protected routes (Proposers/Admin)
 router.post('/', protect, proposer, createProduct);
 router.put('/:id', protect, proposer, updateProduct);
 router.delete('/:id', protect, proposer, deleteProduct);
