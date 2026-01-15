@@ -1,22 +1,21 @@
 const mongoose = require('mongoose');
 
-// Define schema for Educational Content
 const educationalContentSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'User', // Author (Proposer)
+        ref: 'User',
     },
     title: {
         type: String,
         required: true,
     },
     content: {
-        type: String, // Can be text content
+        type: String,
         required: true,
     },
     resourceUrl: {
-        type: String, // Optional URL to video or article
+        type: String,
     },
     category: {
         type: String,
@@ -24,7 +23,7 @@ const educationalContentSchema = mongoose.Schema({
     },
     isApproved: {
         type: Boolean,
-        default: false, // Admin needs to approve
+        default: false,
     }
 }, {
     timestamps: true,

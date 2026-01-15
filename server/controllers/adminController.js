@@ -3,21 +3,18 @@ const User = require('../models/User');
 const Product = require('../models/Product');
 const EducationalContent = require('../models/EducationalContent');
 
-
 const getUsers = asyncHandler(async (req, res) => {
-    
     const status = req.query.status;
     let query = {};
 
     if (status) {
         query.proposerStatus = status;
-        query.role = { $in: ['proposer', 'farmer', 'expert', 'user'] }; // Include 'user' for approval
+        query.role = { $in: ['proposer', 'farmer', 'expert', 'user'] };
     }
 
     const users = await User.find(query).select('-password');
     res.json(users);
 });
-
 
 const updateProposerStatus = asyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
@@ -45,12 +42,10 @@ const updateProposerStatus = asyncHandler(async (req, res) => {
     }
 });
 
-
 const getPendingProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({ isApproved: false }).populate('user', 'name email');
     res.json(products);
 });
-
 
 const approveProduct = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
@@ -66,7 +61,6 @@ const approveProduct = asyncHandler(async (req, res) => {
         throw new Error('Product not found');
     }
 });
-
 
 const getPendingEducation = asyncHandler(async (req, res) => {
     const content = await EducationalContent.find({ isApproved: false }).populate('user', 'name');
@@ -91,7 +85,6 @@ const approveEducation = asyncHandler(async (req, res) => {
 const Order = require('../models/Order');
 const Category = require('../models/Category');
 
-
 const getPlatformStats = asyncHandler(async (req, res) => {
     const usersCount = await User.countDocuments();
     const productsCount = await Product.countDocuments();
@@ -105,7 +98,6 @@ const getPlatformStats = asyncHandler(async (req, res) => {
         education: educationCount,
     });
 });
-
 
 const getCategories = asyncHandler(async (req, res) => {
     const categories = await Category.find({});
@@ -124,7 +116,6 @@ const addCategory = asyncHandler(async (req, res) => {
     const category = await Category.create({ name });
     res.status(201).json(category);
 });
-
 
 const deleteCategory = asyncHandler(async (req, res) => {
     const category = await Category.findById(req.params.id);
